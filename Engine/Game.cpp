@@ -1,42 +1,27 @@
-/****************************************************************************************** 
- *	Chili DirectX Framework Version 16.07.20											  *	
- *	Game.cpp																			  *
- *	Copyright 2016 PlanetChili.net <http://www.planetchili.net>							  *
- *																						  *
- *	This file is part of The Chili DirectX Framework.									  *
- *																						  *
- *	The Chili DirectX Framework is free software: you can redistribute it and/or modify	  *
- *	it under the terms of the GNU General Public License as published by				  *
- *	the Free Software Foundation, either version 3 of the License, or					  *
- *	(at your option) any later version.													  *
- *																						  *
- *	The Chili DirectX Framework is distributed in the hope that it will be useful,		  *
- *	but WITHOUT ANY WARRANTY; without even the implied warranty of						  *
- *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the						  *
- *	GNU General Public License for more details.										  *
- *																						  *
- *	You should have received a copy of the GNU General Public License					  *
- *	along with The Chili DirectX Framework.  If not, see <http://www.gnu.org/licenses/>.  *
- ******************************************************************************************/
 #include "MainWindow.h"
 #include "Game.h"
 #include "SpriteCodex.h"
 
-Game::Game( MainWindow& wnd )
+Game::Game(MainWindow& wnd)
 	:
-	wnd( wnd ),
-	gfx( wnd ),
-	brd( gfx ),
-	rng( std::random_device()() ),
-	snek( {2,2} ),
-	goal( rng,brd,snek )
+	wnd(wnd),
+	gfx(wnd),
+	brd(gfx),
+	snek({ 2,2 }),
+	rng(std::random_device()()),
+	goal(rng, brd, snek),
+	score(gfx)
 {
-	sndTitle.Play( 1.0f,1.0f );
+	// sndTitle.Play(1.0f, 1.0f);
+	if (wnd.kbd.KeyIsPressed(VK_ESCAPE))
+	{
+		sndTitle.StopOne();
+	}
 }
 
 void Game::Go()
 {
-	gfx.BeginFrame();	
+	gfx.BeginFrame();
 	UpdateModel();
 	ComposeFrame();
 	gfx.EndFrame();
@@ -46,81 +31,116 @@ void Game::UpdateModel()
 {
 	const float dt = ft.Mark();
 
-	if( gameIsStarted )
+	if (gameIsStarted)
 	{
-		if( !gameIsOver )
+		if (!gameIsOver)
 		{
-			if( wnd.kbd.KeyIsPressed( VK_UP ) )
+			// Behavior control
 			{
-				delta_loc = { 0,-1 };
-			}
-			else if( wnd.kbd.KeyIsPressed( VK_DOWN ) )
-			{
-				delta_loc = { 0,1 };
-			}
-			else if( wnd.kbd.KeyIsPressed( VK_LEFT ) )
-			{
-				delta_loc = { -1,0 };
-			}
-			else if( wnd.kbd.KeyIsPressed( VK_RIGHT ) )
-			{
-				delta_loc = { 1,0 };
+				if (wnd.kbd.KeyIsPressed(VK_UP) && p_current_direction != down)
+				{
+					delta_loc = { 0,-1 };
+					p_current_direction = up;
+				}
+				else if (wnd.kbd.KeyIsPressed(VK_DOWN) && p_current_direction != up)
+				{
+					delta_loc = { 0,1 };
+					p_current_direction = down;
+				}
+				else if (wnd.kbd.KeyIsPressed(VK_LEFT) && p_current_direction != right)
+				{
+					delta_loc = { -1,0 };
+					p_current_direction = left;
+				}
+				else if (wnd.kbd.KeyIsPressed(VK_RIGHT) && p_current_direction != left)
+				{
+					delta_loc = { 1,0 };
+					p_current_direction = right;
+				}
+
+				if (wnd.kbd.KeyIsPressed(VK_SHIFT))
+				{
+					snekMovePeriod *= instant_multiplier;
+				}
+				else snekMovePeriod = 0.09f;
 			}
 
-			snekMoveCounter += dt;
-			if( snekMoveCounter >= snekMovePeriod )
+			// Moving timing and speed configurations
 			{
-				snekMoveCounter -= snekMovePeriod;
-				const Location next = snek.GetNextHeadLocation( delta_loc );
-				if( !brd.IsInsideBoard( next ) ||
-					snek.IsInTileExceptEnd( next ) )
+				snekMoveCounter += dt;
+				if (snekMoveCounter >= snekMovePeriod)
 				{
-					gameIsOver = true;
-					sndFart.Play();
-					sndMusic.StopAll();
-				}
-				else
-				{
-					if( next == goal.GetLocation() )
+					snekMoveCounter -= snekMovePeriod;
+					const Location next = snek.GetNextHeadLocation(delta_loc);
+					if (!brd.IsInsideBoard(next) ||
+						snek.IsInTileExceptEnd(next) ||
+						brd.CheckForObstacle(next))
 					{
-						snek.GrowAndMoveBy( delta_loc );
-						goal.Respawn( rng,brd,snek );
-						sfxEat.Play( rng,0.8f );
+						gameIsOver = true;
+						sndFart.Play();
+						sndMusic.StopAll();
 					}
 					else
 					{
-						snek.MoveBy( delta_loc );
+						if (next == goal.GetLocation())
+						{
+							snek.GrowAndMoveBy(delta_loc);
+							goal.Respawn(rng, brd, snek);
+							brd.SpawnObstacle(rng, snek, goal);
+							sfxEat.Play(rng, 0.8f);
+
+							score.smallScoreCounter += ssc_increase_ratio;
+							if (score.smallScoreCounter > Graphics::ScreenWidth - score_padding)
+							{
+								score.smallScoreCounter = score_padding;
+								score.longScoreCounter += lsc_increase_ratio;
+							}
+						}
+						else
+						{
+							snek.MoveBy(delta_loc);
+						}
+						sfxSlither.Play(rng, 0.08f);
 					}
-					sfxSlither.Play( rng,0.08f );
 				}
+				snekMovePeriod = std::max(snekMovePeriod - dt * snekSpeedupFactor, snekMovePeriodMin);
 			}
-			snekMovePeriod = std::max( snekMovePeriod - dt * snekSpeedupFactor,snekMovePeriodMin );
 		}
 	}
 	else
 	{
-		if( wnd.kbd.KeyIsPressed( VK_RETURN ) )
+		if (wnd.kbd.KeyIsPressed(VK_RETURN))
 		{
-			sndMusic.Play( 1.0f,0.6f );
+			sndMusic.Play(1.0f, 0.6f);
 			gameIsStarted = true;
 		}
 	}
+
 }
 
+// Magic happens here
 void Game::ComposeFrame()
 {
-	if( gameIsStarted )
+
+	if (gameIsStarted)
 	{
-		snek.Draw( brd );
-		goal.Draw( brd );
-		if( gameIsOver )
-		{
-			SpriteCodex::DrawGameOver( 350,265,gfx );
-		}
+		snek.Draw(brd);
+		goal.Draw(brd);
 		brd.DrawBorder();
+		brd.DrawObstacles();
+		score.DrawScore(Colors::Red);
+
+		if (gameIsOver)
+		{
+			// SpriteCodex::DrawGameOver(350, 265, gfx);
+			if (wnd.kbd.KeyIsPressed(VK_RETURN))
+				exit(0);
+		}
+
 	}
 	else
 	{
-		SpriteCodex::DrawTitle( 290,225,gfx );
+		snek.Draw(brd);
+		goal.Draw(brd);
 	}
 }

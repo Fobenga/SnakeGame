@@ -1,8 +1,6 @@
 #pragma once
 
 #include "Board.h"
-
-
 class Snake
 {
 private:	
@@ -19,6 +17,7 @@ private:
 		Location loc;
 		Color c;
 	};
+
 public:
 	Snake( const Location& loc );
 	void MoveBy( const Location& delta_loc );
@@ -29,7 +28,7 @@ public:
 	bool IsInTile( const Location& target ) const;
 
 private:
-	static constexpr Color headColor = Colors::Yellow;
+	static constexpr Color headColor = Colors::Green;
 	static constexpr int nSegmentsMax = 100;
 	Segment segments[nSegmentsMax];
 	int nSegments = 1;
