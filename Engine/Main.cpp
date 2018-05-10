@@ -6,6 +6,7 @@ int WINAPI wWinMain(HINSTANCE hInst, HINSTANCE, LPWSTR pArgs, INT)
 {
 	try
 	{
+		// game starts here -- 
 		MainWindow wnd(hInst, pArgs);
 		try
 		{

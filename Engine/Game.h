@@ -36,8 +36,8 @@ private:
 	score score_;
 
 	// set the state of the game
-	bool game_over_ = false;
-	bool game_started_ = false;
+	enum game_state { standby, game_over, running};
+	int game_state_ = standby;
 
 	// sound effect calls
 	SoundEffect sfx_feed_ = SoundEffect({ L"sound\\feed.wav" });
