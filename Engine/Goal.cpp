@@ -13,11 +13,22 @@ void Goal::Respawn(std::mt19937 & rng, const Board & brd, const Snake & snake)
 	Location newLoc;
 
 	// attempt to fix when the goal spawns in the same location of a already created obstacle
-	do
+	if(snake.IsInTile(newLoc) && brd.CheckForObstacle(newLoc))
 	{
 		newLoc.x = xDist(rng);
 		newLoc.y = yDist(rng);
-	} while (snake.IsInTile(newLoc) && brd.CheckForObstacle(newLoc)); 
+	}
+
+	// another algorithm methods if (if) didn't work properly
+
+	// while(snake.IsInTile(newLoc) && brd.CheckForObstacle(newLoc))
+	// {
+	// }
+	
+	// do
+	// {
+	// 
+	// } while (snake.IsInTile(newLoc) && brd.CheckForObstacle(newLoc)); 
 
 	loc = newLoc;
 }

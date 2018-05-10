@@ -11,50 +11,59 @@
 #include "FrameTimer.h"
 #include "Score.h"
 
-class Game
+class game
 {
 public:
-	Game(class MainWindow& wnd);
-	Game(const Game&) = delete;
-	Game& operator=(const Game&) = delete;
-	void Go();
+	explicit game(class MainWindow& wnd);
+	game(const game&) = delete;
+	game& operator=(const game&) = delete;
+	void go();
+
 
 private:
-	void ComposeFrame();
-	void UpdateModel();
+	void compose_frame();
+	void update_model();
 
-private:
 	// constructor calls
-	MainWindow & wnd;
-	Graphics gfx;
-	Board brd;
-	Snake snek;
-	Location delta_loc = { 1,0 };
-	std::mt19937 rng;
-	FrameTimer ft;
-	Goal goal;
-	Score score;
+	MainWindow & wnd_;
+	Graphics gfx_;
+	Board brd_;
+	Snake snake_;
+	Location delta_loc_ = { 1,0 };
+	std::mt19937 rng_;
+	FrameTimer ft_;
+	Goal goal_;
+	score score_;
+
+	// set the state of the game
+	bool game_over_ = false;
+	bool game_started_ = false;
 
 	// sound effect calls
-	SoundEffect sfxEat = SoundEffect({ L"Sounds\\Eat.wav" });
-	SoundEffect sfxSlither = SoundEffect({ L"Sounds\\Slither0.wav",L"Sounds\\Slither1.wav",L"Sounds\\Slither2.wav" });
-	Sound sndMusic = Sound(L"Sounds\\Music_Loop.wav", Sound::LoopType::AutoFullSound);
-	Sound sndTitle = Sound(L"Sounds\\Title.wav");
-	Sound sndFart = Sound(L"Sounds\\Fart.wav");
+	SoundEffect sfx_feed_ = SoundEffect({ L"sound\\feed.wav" });
+	SoundEffect sfx_slither_ = SoundEffect({ L"sound\\slither0.wav",L"sound\\slither1.wav",L"sound\\slither2.wav" });
+	Sound snd_musicloop_ = Sound(L"sound\\music.wav", Sound::LoopType::AutoFullSound); // loop this sound forever
+	// Sound snd_title_ = Sound(L"sound\\Title.wav"); // unused
+	Sound snd_dead_ = Sound(L"sound\\fail.wav");
 
-	// snake movement variables 
-	static constexpr float snekMovePeriodMin = 0.06f;
+	// snake movement variables
+	static constexpr float snake_mov_period_min = 0.06f;
 	static constexpr float instant_multiplier = 0.8f;
-	float snekMovePeriod = 0.09f;
-	float snekMoveCounter = 0.0f;
-	float snekSpeedupFactor = 0.001f;
+	static constexpr float default_move_period = 0.09f;
+	float snake_mov_period_ = default_move_period;
+	float snake_mov_counter_ = 0.0f;
+	float snake_velocity_factor_ = 0.001f;
 	enum pos { up, down, left, right };
-	int p_current_direction = right;
-	bool gameIsOver = false;
-	bool gameIsStarted = false;
+	int p_current_direction_ = right;
+	bool snake_already_initialized_ = false;
 
 	// score constants
-	static constexpr int ssc_increase_ratio = 50;
-	static constexpr int lsc_increase_ratio = 40;
-	static constexpr int score_padding = 70;
+	int ss_;
+	int ls_;
+	static constexpr int s_padding = 70;
+	static constexpr int ls_increase_ratio = 40;
+	static constexpr int ss_amount_tofeed_ls = 5;
+	static constexpr int ss_limit = Graphics::ScreenWidth - s_padding;
+	static constexpr int ss_increase_ratio = ss_limit / ss_amount_tofeed_ls;
+	int final_score_ = ss_ * ss_increase_ratio + ls_ * ls_increase_ratio;
 };

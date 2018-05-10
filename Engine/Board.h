@@ -19,7 +19,7 @@ public:
 
 
 private:
-	static constexpr Color borderColor = Colors::Blue;
+	static constexpr Color borderColor = Colors::White;
 	static constexpr Color obstacleColor = Colors::Gray;
 	static constexpr int dimension = 20;
 	static constexpr int cellPadding = 1;

@@ -26,10 +26,10 @@ public:
 	void Draw( Board& brd ) const;
 	bool IsInTileExceptEnd( const Location& target ) const;
 	bool IsInTile( const Location& target ) const;
-
+	
 private:
-	static constexpr Color headColor = Colors::Green;
-	static constexpr int nSegmentsMax = 100;
+	static constexpr Color headColor = Colors::White;
+	static constexpr int nSegmentsMax = 5;
 	Segment segments[nSegmentsMax];
 	int nSegments = 1;
 };

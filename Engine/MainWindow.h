@@ -75,7 +75,7 @@ public:
 	Keyboard kbd;
 	Mouse mouse;
 private:
-	static constexpr wchar_t* wndClassName = L"Cobrinha do karai";
+	static constexpr wchar_t* wndClassName = L"Cobrinha by Fobenga";
 	HINSTANCE hInst = nullptr;
 	std::wstring args;
 };

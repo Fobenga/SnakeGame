@@ -5,10 +5,10 @@ Snake::Snake(const Location& loc)
 {
 	constexpr int nBodyColors = 4;
 	constexpr Color bodyColors[nBodyColors] = {
-		{ 100,255,100 },
-		{ 100,255,100 },
-		{ 100,255,100 },
-		{ 100,255,100 }
+		{ 255,255,255},
+		{ 255,255,255},
+		{ 255,255,255},
+		{ 255,255,255}
 	};
 
 	for (int i = 0; i < nSegmentsMax; ++i)
@@ -39,7 +39,7 @@ void Snake::GrowAndMoveBy(const Location& delta_loc)
 {
 	if (nSegments < nSegmentsMax)
 	{
-		++nSegments;
+		nSegments++;
 	}
 	MoveBy(delta_loc);
 }
