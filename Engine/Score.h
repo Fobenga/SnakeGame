@@ -1,4 +1,5 @@
 #include "Graphics.h"
+#include "FrameTimer.h"
 
 class score
 {
@@ -10,6 +11,9 @@ public:
 	int long_score_counter = main_score_x;
 
 private:
+
+	// graphical score
+
 	// Small Score that grows fast in the top of the screen.
 	static constexpr int padding = 10;
 	static constexpr int main_score_x = 70; // Position X on Screen

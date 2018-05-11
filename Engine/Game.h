@@ -36,14 +36,13 @@ private:
 	score score_;
 
 	// set the state of the game
-	enum game_state { standby, game_over, running};
+	enum game_state { standby, game_over, running };
 	int game_state_ = standby;
 
 	// sound effect calls
 	SoundEffect sfx_feed_ = SoundEffect({ L"sound\\feed.wav" });
 	SoundEffect sfx_slither_ = SoundEffect({ L"sound\\slither0.wav",L"sound\\slither1.wav",L"sound\\slither2.wav" });
-	Sound snd_musicloop_ = Sound(L"sound\\music.wav", Sound::LoopType::AutoFullSound); // loop this sound forever
-	// Sound snd_title_ = Sound(L"sound\\Title.wav"); // unused
+	Sound snd_musicloop_ = Sound(L"sound\\music.wav", Sound::LoopType::AutoFullSound); // loop this forever
 	Sound snd_dead_ = Sound(L"sound\\fail.wav");
 
 	// snake movement variables
@@ -52,18 +51,22 @@ private:
 	static constexpr float default_move_period = 0.09f;
 	float snake_mov_period_ = default_move_period;
 	float snake_mov_counter_ = 0.0f;
+	int snake_size = 4;
 	float snake_velocity_factor_ = 0.001f;
 	enum pos { up, down, left, right };
 	int p_current_direction_ = right;
 	bool snake_already_initialized_ = false;
 
-	// score constants
+	// score variables 
 	int ss_;
 	int ls_;
+	int fruits_catched = 0;
+	int ls_counter = 0;
 	static constexpr int s_padding = 70;
 	static constexpr int ls_increase_ratio = 40;
 	static constexpr int ss_amount_tofeed_ls = 5;
 	static constexpr int ss_limit = Graphics::ScreenWidth - s_padding;
 	static constexpr int ss_increase_ratio = ss_limit / ss_amount_tofeed_ls;
-	int final_score_ = ss_ * ss_increase_ratio + ls_ * ls_increase_ratio;
+	static constexpr int ss_decrease_ratio = 1000;
+
 };

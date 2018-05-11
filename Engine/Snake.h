@@ -29,7 +29,7 @@ public:
 	
 private:
 	static constexpr Color headColor = Colors::White;
-	static constexpr int nSegmentsMax = 5;
+	static constexpr int nSegmentsMax = 100;
 	Segment segments[nSegmentsMax];
 	int nSegments = 1;
 };

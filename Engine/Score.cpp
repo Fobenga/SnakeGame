@@ -5,6 +5,8 @@ score::score(Graphics & gfx)
 	gfx(gfx)
 {}
 
+
+
 void score::draw_score(const Color c) const
 {
 	// small score drawing
