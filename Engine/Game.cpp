@@ -84,7 +84,6 @@ void game::update_model()
 							obstacles_generated_++;
 						}
 
-						sfx_feed_.Play(rng_, 0.8f);
 
 						if (brd_.CheckForObstacle(goal_.GetLocation()))
 							goal_.Respawn(rng_, brd_, snake_);
@@ -97,13 +96,18 @@ void game::update_model()
 
 						if (score_.small_score_counter > ss_limit)
 						{
+							sfx_difpass_.Play(rng_, 0.8f);
+							new_stage_ = true;
 							ls_counter_++;
 							ls_++;
 							score_.small_score_counter = s_padding;
 							score_.long_score_counter += ls_increase_ratio;
-							new_stage_ = true;
 						}
-						else new_stage_ = false;
+						else
+						{
+							sfx_feed_.Play(rng_, 0.8f);
+							new_stage_ = false;
+						}
 					}
 					else
 					{
@@ -127,6 +131,10 @@ void game::update_model()
 	}
 	else if (game_state_ == standby)
 	{
+		gfx_.DrawSprite(Graphics::ScreenWidth / 2 - brd_.GetGridWidth()/2 - enter_key_.get_width() / 2, 
+						Graphics::ScreenHeight / 2 - brd_.GetGridHeight()/2 - enter_key_.get_height() / 2,
+						enter_key_.get_rect(), enter_key_);
+
 		if (wnd_.kbd.KeyIsPressed(VK_RETURN))
 		{
 			snd_musicloop_.Play(1.0f, 0.6f);

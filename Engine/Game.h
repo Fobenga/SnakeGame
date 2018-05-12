@@ -10,6 +10,8 @@
 #include "SoundEffect.h"
 #include "FrameTimer.h"
 #include "Score.h"
+#include "Surface.h"
+
 
 class game
 {
@@ -38,11 +40,14 @@ private:
 	// set the state of the game
 	enum game_state { standby, game_over, running };
 	int game_state_ = standby;
+	Surface enter_key_ = Surface(L"bmp\\enter.bmp");
 
 	// sound effect calls
 	SoundEffect sfx_feed_ = SoundEffect({ L"sound\\feed.wav" }, false, 0);
+	SoundEffect sfx_difpass_ = SoundEffect({ L"sound\\difpass.wav" }, false, 0);
 	Sound snd_musicloop_ = Sound(L"sound\\music.wav", Sound::LoopType::AutoFullSound); // loop this forever
 	Sound snd_dead_ = Sound(L"sound\\fail.wav");
+
 
 	// snake movement variables
 	static constexpr float snake_mov_period_min = 0.06f;
@@ -67,7 +72,7 @@ private:
 	bool new_stage_ = false;
 	bool death_by_time_ = false;
 	static constexpr int s_padding = 70;
-	static constexpr int ls_increase_ratio = 40;
+	static constexpr int ls_increase_ratio = 80;
 	static constexpr int ss_amount_tofeed_ls = 5;
 	static constexpr int ss_limit = Graphics::ScreenWidth - s_padding;
 	static constexpr int ss_increase_ratio = ss_limit / ss_amount_tofeed_ls;

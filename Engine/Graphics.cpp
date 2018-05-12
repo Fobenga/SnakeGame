@@ -26,6 +26,7 @@
 #include <string>
 #include <array>
 
+
 // Ignore the intellisense error "cannot open source file" for .shh files.
 // They will be created during the build sequence before the preprocessor runs.
 namespace FramebufferShaders
@@ -252,6 +253,11 @@ Graphics::~Graphics()
 	if (pImmediateContext) pImmediateContext->ClearState();
 }
 
+RectI Graphics::get_screen_rect()
+{
+	return { 0, ScreenWidth, 0, ScreenHeight };
+}
+
 void Graphics::EndFrame()
 {
 	HRESULT hr;
@@ -332,6 +338,97 @@ void Graphics::DrawRect(int x0, int y0, int x1, int y1, Color c)
 		for (int x = x0; x < x1; ++x)
 		{
 			PutPixel(x, y, c);
+		}
+	}
+}
+
+void Graphics::DrawSpriteNonChroma(int x, int y, const Surface & s)
+{
+	DrawSpriteNonChroma(x, y, s.get_rect(), s);
+}
+void Graphics::DrawSpriteNonChroma(int x, int y, const RectI & src_rect, const Surface & s)
+{
+	DrawSpriteNonChroma(x, y, src_rect, get_screen_rect(), s);
+}
+void Graphics::DrawSpriteNonChroma(int x, int y, RectI src_rect, const RectI & clip, const Surface & s)
+{
+	assert(src_rect.left >= 0);
+	assert(src_rect.right <= s.get_width());
+	assert(src_rect.top >= 0);
+	assert(src_rect.bottom <= s.get_height());
+
+	if (x < clip.left)
+	{
+		src_rect.left += clip.left - x;
+		x = clip.left;
+	}
+
+	if (y < clip.top)
+	{
+		src_rect.top += clip.top - y;
+		y = clip.top;
+	}
+
+	if (x + src_rect.get_width() > clip.right)
+	{
+		src_rect.right -= x + src_rect.get_width() - clip.right;
+	}
+
+	if (y + src_rect.get_height() > clip.bottom)
+	{
+		src_rect.bottom -= y + src_rect.get_height() - clip.bottom;
+	}
+
+	for (int sy = src_rect.top; sy < src_rect.bottom; sy++)
+	{
+		for (int sx = src_rect.left; sx < src_rect.right; sx++)
+		{
+			PutPixel(x + sx - src_rect.left, y + sy - src_rect.top, s.get_pixel(sx, sy));
+		}
+	}
+}
+void Graphics::DrawSprite(int x, int y, RectI src_rect, const Surface& s, Color chroma)
+{
+	DrawSprite(x, y, src_rect, get_screen_rect(), s, chroma);
+}
+void Graphics::DrawSprite(int x, int y, RectI src_rect, const RectI& clip, const Surface& s, Color chroma)
+{
+	assert(src_rect.left >= 0);
+	assert(src_rect.right <= s.get_width());
+	assert(src_rect.top >= 0);
+	assert(src_rect.bottom <= s.get_height());
+
+	if (x < clip.left)
+	{
+		src_rect.left += clip.left - x;
+		x = clip.left;
+	}
+
+	if (y < clip.top)
+	{
+		src_rect.top += clip.top - y;
+		y = clip.top;
+	}
+
+	if (x + src_rect.get_width() > clip.right)
+	{
+		src_rect.right -= x + src_rect.get_width() - clip.right;
+	}
+
+	if (y + src_rect.get_height() > clip.bottom)
+	{
+		src_rect.bottom -= y + src_rect.get_height() - clip.bottom;
+	}
+
+	for (int sy = src_rect.top; sy < src_rect.bottom; sy++)
+	{
+		for (int sx = src_rect.left; sx < src_rect.right; sx++)
+		{
+			const Color src_pixel = s.get_pixel(sx, sy);
+			if (src_pixel != chroma)
+			{
+				PutPixel(x + sx - src_rect.left, y + sy - src_rect.top, src_pixel);
+			}
 		}
 	}
 }

@@ -3,6 +3,8 @@
 #include <wrl.h>
 #include "ChiliException.h"
 #include "Colors.h"
+#include "RectI.h"
+#include "Surface.h"
 
 class Graphics
 {
@@ -41,6 +43,13 @@ public:
 	{
 		DrawRect( x0,y0,x0 + width,y0 + height,c );
 	}
+
+	void Graphics::DrawSpriteNonChroma(int x, int y, const Surface & s);
+	void Graphics::DrawSpriteNonChroma(int x, int y, const RectI & src_rect, const Surface & s);
+	void Graphics::DrawSpriteNonChroma(int x, int y, RectI src_rect, const RectI & clip, const Surface & s);
+	void Graphics::DrawSprite(int x, int y, RectI src_rect, const Surface& s, Color chroma = Colors::Magenta);
+	void Graphics::DrawSprite(int x, int y, RectI src_rect, const RectI& clip, const Surface& s, Color chroma = Colors::Magenta);
+
 	~Graphics();
 private:
 	Microsoft::WRL::ComPtr<IDXGISwapChain>				pSwapChain;
@@ -59,4 +68,6 @@ private:
 public:
 	static constexpr int ScreenWidth = 800;
 	static constexpr int ScreenHeight = 600;
+	static RectI get_screen_rect();
+
 };

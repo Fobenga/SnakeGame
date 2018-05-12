@@ -60,9 +60,6 @@
     <ClInclude Include="Snake.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SpriteCodex.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Goal.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -76,6 +73,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SoundEffect.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RectI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Surface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\chili_framework2\Engine\Vei2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -107,9 +113,6 @@
     <ClCompile Include="Snake.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SpriteCodex.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Goal.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -120,6 +123,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Score.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Surface.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RectI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\chili_framework2\Engine\Vei2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -140,28 +152,5 @@
     <Image Include="Chili.ico">
       <Filter>Resource Files</Filter>
     </Image>
-  </ItemGroup>
-  <ItemGroup>
-    <Media Include="Sounds\Eat.wav">
-      <Filter>Sounds</Filter>
-    </Media>
-    <Media Include="Sounds\Music_Loop.wav">
-      <Filter>Sounds</Filter>
-    </Media>
-    <Media Include="Sounds\Slither0.wav">
-      <Filter>Sounds</Filter>
-    </Media>
-    <Media Include="Sounds\Slither1.wav">
-      <Filter>Sounds</Filter>
-    </Media>
-    <Media Include="Sounds\Slither2.wav">
-      <Filter>Sounds</Filter>
-    </Media>
-    <Media Include="Sounds\Title.wav">
-      <Filter>Sounds</Filter>
-    </Media>
-    <Media Include="Sounds\Fart.wav">
-      <Filter>Sounds</Filter>
-    </Media>
   </ItemGroup>
 </Project>

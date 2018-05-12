@@ -136,6 +136,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\chili_framework2\Engine\Vei2.h" />
     <ClInclude Include="Board.h" />
     <ClInclude Include="ChiliException.h" />
     <ClInclude Include="ChiliWin.h" />
@@ -149,14 +150,16 @@
     <ClInclude Include="Location.h" />
     <ClInclude Include="MainWindow.h" />
     <ClInclude Include="Mouse.h" />
+    <ClInclude Include="RectI.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Score.h" />
     <ClInclude Include="Snake.h" />
     <ClInclude Include="Sound.h" />
     <ClInclude Include="SoundEffect.h" />
-    <ClInclude Include="SpriteCodex.h" />
+    <ClInclude Include="Surface.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\chili_framework2\Engine\Vei2.cpp" />
     <ClCompile Include="Board.cpp" />
     <ClCompile Include="DXErr.cpp" />
     <ClCompile Include="FrameTimer.cpp" />
@@ -167,10 +170,11 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MainWindow.cpp" />
     <ClCompile Include="Mouse.cpp" />
+    <ClCompile Include="RectI.cpp" />
     <ClCompile Include="Score.cpp" />
     <ClCompile Include="Snake.cpp" />
     <ClCompile Include="Sound.cpp" />
-    <ClCompile Include="SpriteCodex.cpp" />
+    <ClCompile Include="Surface.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="FramebufferPS.hlsl">
@@ -239,15 +243,6 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="Chili.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Media Include="Sounds\Eat.wav" />
-    <Media Include="Sounds\Fart.wav" />
-    <Media Include="Sounds\Music_Loop.wav" />
-    <Media Include="Sounds\Slither0.wav" />
-    <Media Include="Sounds\Slither1.wav" />
-    <Media Include="Sounds\Slither2.wav" />
-    <Media Include="Sounds\Title.wav" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
