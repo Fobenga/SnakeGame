@@ -40,8 +40,7 @@ private:
 	int game_state_ = standby;
 
 	// sound effect calls
-	SoundEffect sfx_feed_ = SoundEffect({ L"sound\\feed.wav" });
-	SoundEffect sfx_slither_ = SoundEffect({ L"sound\\slither0.wav",L"sound\\slither1.wav",L"sound\\slither2.wav" });
+	SoundEffect sfx_feed_ = SoundEffect({ L"sound\\feed.wav" }, false, 0);
 	Sound snd_musicloop_ = Sound(L"sound\\music.wav", Sound::LoopType::AutoFullSound); // loop this forever
 	Sound snd_dead_ = Sound(L"sound\\fail.wav");
 
@@ -49,9 +48,10 @@ private:
 	static constexpr float snake_mov_period_min = 0.06f;
 	static constexpr float instant_multiplier = 0.8f;
 	static constexpr float default_move_period = 0.09f;
+	static constexpr int init_snake_s = 3;
 	float snake_mov_period_ = default_move_period;
 	float snake_mov_counter_ = 0.0f;
-	int snake_size_ = 4;
+	int snake_size_ = init_snake_s + 1;
 	float snake_velocity_factor_ = 0.001f;
 	enum pos { up, down, left, right };
 	int p_current_direction_ = right;
@@ -60,11 +60,12 @@ private:
 	// score variables 
 	int ss_;
 	int ls_;
+	int total_movement_ = 0;
 	int fruits_catched_ = 0;
-	int fruits_generated_ = 0;
 	int ls_counter_ = 0;
 	int obstacles_generated_ = 0;
 	bool new_stage_ = false;
+	bool death_by_time_ = false;
 	static constexpr int s_padding = 70;
 	static constexpr int ls_increase_ratio = 40;
 	static constexpr int ss_amount_tofeed_ls = 5;

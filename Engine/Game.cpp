@@ -77,7 +77,6 @@ void game::update_model()
 					{
 						snake_.GrowAndMoveBy(delta_loc_);
 						goal_.Respawn(rng_, brd_, snake_);
-						fruits_generated_++;
 
 						for (auto i = 1; i <= ls_counter_; ++i)
 						{
@@ -88,10 +87,7 @@ void game::update_model()
 						sfx_feed_.Play(rng_, 0.8f);
 
 						if (brd_.CheckForObstacle(goal_.GetLocation()))
-						{
 							goal_.Respawn(rng_, brd_, snake_);
-							fruits_generated_++;
-						}
 
 						ss_++;
 						snake_size_++;
@@ -112,7 +108,8 @@ void game::update_model()
 					else
 					{
 						snake_.MoveBy(delta_loc_);
-						score_.small_score_counter -= 0.5;
+						total_movement_++;
+						score_.small_score_counter -= 2; // small score decrease ratio
 
 						if (score_.small_score_counter <= s_padding) score_.small_score_counter = s_padding;
 
@@ -120,9 +117,9 @@ void game::update_model()
 						{
 							snd_dead_.Play();
 							game_state_ = game_over;
+							death_by_time_ = true;
 						}
 					}
-					sfx_slither_.Play(rng_, 0.08f);
 				}
 			}
 			snake_mov_period_ = std::max(snake_mov_period_ - dt * snake_velocity_factor_, snake_mov_period_min);
@@ -151,10 +148,9 @@ void game::compose_frame()
 		score_.draw_score(Colors::Red);
 
 		if (!snake_already_initialized_)
-		{
-			for (auto i = 0; i < 3; i++)
+			for (auto i = 0; i < init_snake_s; i++)
 				snake_.GrowAndMoveBy(delta_loc_);
-		}
+
 		snake_already_initialized_ = true;
 	}
 	break;
@@ -179,16 +175,27 @@ void game::compose_frame()
 		static constexpr auto fruit_value = 300;
 		int final_score;
 
+		// three formulas to calculate the final score 
 		if (fruits_catched_ <= 1)
 			final_score = fruit_value * fruits_catched_;
-		else final_score = static_cast<int>(fruit_value * sqrt(fruits_catched_));
+		else if (ls_counter_ < 1)
+			final_score = static_cast<int>(fruit_value * sqrt(fruits_catched_)) - total_movement_;
+		else
+			final_score = static_cast<int>(fruit_value * sqrt(fruits_catched_) * obstacles_generated_ - total_movement_ * 2);
+
+		std::wstring dbt;
+		if (death_by_time_)
+			dbt = L"DEATH BY TIME";
+		else
+			dbt = std::to_wstring(final_score);
 
 		wnd_.ShowMessageBox(L"GAME OVER! DIFFICULTY " + std::to_wstring(ls_counter_),
 							L"Fruits Eaten: " + std::to_wstring(fruits_catched_) +
 							L"\n----------------------------\n"
 							"Obstacles: " + std::to_wstring(obstacles_generated_) +
 							L"\n----------------------------\n"
-							"Final Score: " + std::to_wstring(final_score));
+							"Final Score: " + dbt);
+
 		wnd_.Kill();
 	}
 	break;
