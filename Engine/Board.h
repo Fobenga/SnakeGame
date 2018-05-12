@@ -2,6 +2,7 @@
 
 #include "Graphics.h"
 #include "Location.h"
+#include "RectI.h"
 #include <random>
 
 class Board
@@ -16,11 +17,18 @@ public:
 	void SpawnObstacle(std::mt19937& rng, const class Snake& snake, const class Goal& goal);
 	void DrawBorder();
 	void DrawObstacles();
+	RectI get_rect() const;
 
 
 private:
-	static constexpr Color borderColor = Colors::White;
-	static constexpr Color obstacleColor = Colors::Gray;
+	Color borderColor = Colors::White;
+	Color obstacleColor = Colors::Gray;
+
+	const int left = x;
+	const int top = y;
+	const int bottom = top + (borderWidth + borderPadding) * 2 + height * dimension;
+	const int right = left + (borderWidth + borderPadding) * 2 + width * dimension;
+
 	static constexpr int dimension = 20;
 	static constexpr int cellPadding = 1;
 	static constexpr int width = 32;

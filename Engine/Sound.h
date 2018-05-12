@@ -154,6 +154,7 @@ public:
 	void StopOne();
 	void StopAll();
 	~Sound();
+
 private:	
 	Sound( const std::wstring& fileName,LoopType loopType,
 		unsigned int loopStartSample,unsigned int loopEndSample,

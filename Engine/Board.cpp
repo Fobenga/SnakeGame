@@ -18,7 +18,11 @@ void Board::DrawCell(const Location & loc, Color c)
 	const int off_x = x + borderWidth + borderPadding;
 	const int off_y = y + borderWidth + borderPadding;
 
-	gfx.DrawRectDim(loc.x * dimension + off_x + cellPadding, loc.y * dimension + off_y + cellPadding, dimension - cellPadding * 2, dimension - cellPadding * 2, c);
+	gfx.DrawRectDim(loc.x * dimension + off_x + cellPadding,
+					loc.y * dimension + off_y + cellPadding,
+					dimension - cellPadding * 2,
+					dimension - cellPadding * 2,
+					c);
 }
 
 int Board::GetGridWidth() const
@@ -60,10 +64,7 @@ void Board::SpawnObstacle(std::mt19937 & rng, const Snake & snake, const Goal& g
 
 void Board::DrawBorder()
 {
-	const int top = y;
-	const int left = x;
-	const int bottom = top + (borderWidth + borderPadding) * 2 + height * dimension;
-	const int right = left + (borderWidth + borderPadding) * 2 + width * dimension;
+
 
 	// top
 	gfx.DrawRect(left, top, right, top + borderWidth, borderColor);
@@ -90,4 +91,9 @@ void Board::DrawObstacles()
 			}
 		}
 	}
+}
+
+RectI Board::get_rect() const
+{
+	return {left, right, top, bottom};
 }

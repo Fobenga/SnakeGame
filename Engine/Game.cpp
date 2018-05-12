@@ -34,30 +34,48 @@ void game::update_model()
 			{
 				if (wnd_.kbd.KeyIsPressed(VK_UP) && p_current_direction_ != down)
 				{
+					is_up_being_pressed_ = true;
 					p_current_direction_ = up;
 					delta_loc_ = { 0,-1 };
 				}
-				else if (wnd_.kbd.KeyIsPressed(VK_DOWN) && p_current_direction_ != up)
+				else
+					is_up_being_pressed_ = false;
+
+
+				if (wnd_.kbd.KeyIsPressed(VK_DOWN) && p_current_direction_ != up)
 				{
+					is_down_being_pressed_ = true;
 					p_current_direction_ = down;
 					delta_loc_ = { 0,1 };
 				}
-				else if (wnd_.kbd.KeyIsPressed(VK_LEFT) && p_current_direction_ != right)
+				else is_down_being_pressed_ = false;
+
+				if (wnd_.kbd.KeyIsPressed(VK_LEFT) && p_current_direction_ != right)
 				{
+					is_left_being_pressed_ = true;
 					p_current_direction_ = left;
 					delta_loc_ = { -1,0 };
 				}
-				else if (wnd_.kbd.KeyIsPressed(VK_RIGHT) && p_current_direction_ != left)
+				else is_left_being_pressed_ = false;
+
+				if (wnd_.kbd.KeyIsPressed(VK_RIGHT) && p_current_direction_ != left)
 				{
+					is_right_being_pressed_ = true;
 					p_current_direction_ = right;
 					delta_loc_ = { 1,0 };
 				}
+				else is_right_being_pressed_ = false;
 
 				if (wnd_.kbd.KeyIsPressed(VK_SHIFT))
 				{
 					snake_mov_period_ *= instant_multiplier;
+					is_shift_being_pressed_ = true;
 				}
-				else snake_mov_period_ = default_move_period;
+				else
+				{
+					is_shift_being_pressed_ = false;
+					snake_mov_period_ = default_move_period;
+				}
 			}
 		}
 			// Timing and Score configurations
@@ -124,6 +142,7 @@ void game::update_model()
 							snd_dead_.Play();
 							game_state_ = game_over;
 							death_by_time_ = true;
+							snd_musicloop_.StopAll();
 						}
 					}
 				}
@@ -138,6 +157,7 @@ void game::update_model()
 			snd_intro_.StopOne();
 			snd_musicloop_.Play(1.0f, 0.6f);
 			game_state_ = running;
+
 		}
 	}
 }
@@ -146,10 +166,48 @@ void game::compose_frame()
 {
 
 
+
 	switch (game_state_)
 	{
 	case running:
 	{
+
+		// animated intro 
+		y_enterkey_pos_ += 20;
+		y_game_title_pos_ -= 20;
+
+		if (fruits_catched_ < 1)
+		{
+			gfx_.DrawSprite(x_game_title_pos_, y_game_title_pos_, game_title_.get_rect(), brd_.get_rect(), game_title_, key_chroma);
+			gfx_.DrawSprite(x_enterkey_pos_, y_enterkey_pos_, enter_key_.get_rect(), brd_.get_rect(), enter_key_, key_chroma);
+
+		}
+
+		// overlay sprites
+
+		if (is_shift_being_pressed_)
+			gfx_.DrawRectDim(key_align_pos_x, shift_pos_y_, 50, 50, overlay_color);
+
+		if (is_up_being_pressed_)
+			gfx_.DrawRectDim(key_align_pos_x, up_pos_y_, 50, 50, overlay_color);
+
+		if (is_left_being_pressed_)
+			gfx_.DrawRectDim(key_align_pos_x, left_pos_y_, 50, 50, overlay_color);
+
+		if (is_right_being_pressed_)
+			gfx_.DrawRectDim(key_align_pos_x, right_pos_y_, 50, 50, overlay_color);
+
+		if (is_down_being_pressed_)
+			gfx_.DrawRectDim(key_align_pos_x, down_pos_y_, 50, 50, overlay_color);
+
+		gfx_.DrawSprite(key_align_pos_x, left_pos_y_, left_key_.get_rect(), left_key_, key_chroma);
+		gfx_.DrawSprite(key_align_pos_x, right_pos_y_, right_key_.get_rect(), right_key_, key_chroma);
+		gfx_.DrawSprite(key_align_pos_x, down_pos_y_, down_key_.get_rect(), down_key_, key_chroma);
+		gfx_.DrawSprite(key_align_pos_x, shift_pos_y_, shift_key_.get_rect(), shift_key_, key_chroma);
+		gfx_.DrawSprite(key_align_pos_x, up_pos_y_, up_key_.get_rect(), up_key_, key_chroma);
+
+
+		// game loop
 		snake_.Draw(brd_);
 		goal_.Draw(brd_);
 		brd_.DrawBorder();
@@ -165,10 +223,8 @@ void game::compose_frame()
 	break;
 	case standby:
 	{
-
-		gfx_.DrawSprite(Graphics::ScreenWidth / 2 - brd_.GetGridWidth() / 2 - enter_key_.get_width() / 2,
-						Graphics::ScreenHeight / 2 - brd_.GetGridHeight() / 2 - enter_key_.get_height() / 2,
-						enter_key_.get_rect(), enter_key_);
+		gfx_.DrawSprite(x_game_title_pos_, y_game_title_pos_, game_title_.get_rect(), brd_.get_rect(), game_title_, key_chroma);
+		gfx_.DrawSprite(x_enterkey_pos_, y_enterkey_pos_, enter_key_.get_rect(), enter_key_, key_chroma);
 		brd_.DrawBorder();
 	}
 	break;

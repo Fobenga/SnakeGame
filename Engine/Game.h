@@ -40,17 +40,49 @@ private:
 	// set the state of the game
 	enum game_state { standby, game_over, running };
 	int game_state_ = standby;
-	Surface enter_key_ = Surface(L"bmp\\enter.bmp");
-	bool has_wnd_initialized_ = false;
+
+	// intro screen
+	Surface enter_key_ = Surface(L"bmp\\enter_key.bmp");
+	Surface game_title_ = Surface(L"bmp\\snake_title.bmp");
+	int x_enterkey_pos_ = Graphics::ScreenWidth / 2 - brd_.GetGridWidth() / 2 - enter_key_.get_width() / 2;
+	int y_enterkey_pos_ = Graphics::ScreenHeight / 2 - brd_.GetGridHeight() / 2 - enter_key_.get_height() / 2 + 30;
+	int y_game_title_pos_ = Graphics::ScreenHeight / 2 - brd_.GetGridHeight() / 2 - enter_key_.get_height() / 2 - 50;
+	int x_game_title_pos_ = Graphics::ScreenWidth / 2 - brd_.GetGridWidth() / 2 - enter_key_.get_width() / 2 - 50;
+
+	// key overlay
+	Surface shift_key_ = Surface(L"bmp\\shift_key.bmp");
+	Surface left_key_ = Surface(L"bmp\\left_key.bmp");
+	Surface right_key_ = Surface(L"bmp\\right_key.bmp");
+	Surface down_key_ = Surface(L"bmp\\down_key.bmp");
+	Surface up_key_ = Surface(L"bmp\\up_key.bmp");
+
+	static constexpr Color overlay_color = { 80,80,80 };
+	static constexpr Color key_chroma = Colors::Black;
+	static constexpr int padding_between_keys = 60;
+	static constexpr int key_align_pos_x = 730;
+	static constexpr int key_align_pos_y = 50;
+
+	const int shift_pos_y_ = key_align_pos_y;
+	const int up_pos_y_ = shift_pos_y_ + padding_between_keys;
+	const int left_pos_y_ = up_pos_y_ + padding_between_keys;
+	const int right_pos_y_ = left_pos_y_ + padding_between_keys;
+	const int down_pos_y_ = right_pos_y_ + padding_between_keys;
+
+	bool is_shift_being_pressed_ = false;
+	bool is_left_being_pressed_ = false;
+	bool is_right_being_pressed_ = false;
+	bool is_down_being_pressed_ = false;
+	bool is_up_being_pressed_ = false;
 
 	// sound effect calls
 	SoundEffect sfx_feed_ = SoundEffect({ L"sound\\feed.wav" }, false, 0);
 	SoundEffect sfx_difpass_ = SoundEffect({ L"sound\\difpass.wav" }, false, 0);
-	Sound snd_intro_ = Sound(L"sound\\intro.wav",Sound::LoopType::AutoFullSound); 
-	Sound snd_musicloop_ = Sound(L"sound\\music.wav", Sound::LoopType::AutoFullSound); // loop this forever
-	Sound snd_dead_ = Sound(L"sound\\fail.wav");
 	static constexpr float default_sfx_vol = 0.8f;
 
+	// sound calls
+	Sound snd_intro_ = Sound(L"sound\\intro.wav", Sound::LoopType::AutoFullSound);
+	Sound snd_musicloop_ = Sound(L"sound\\music.wav", Sound::LoopType::AutoFullSound); // loop this forever
+	Sound snd_dead_ = Sound(L"sound\\fail.wav");
 
 	// snake movement variables
 	static constexpr float snake_mov_period_min = 0.06f;
