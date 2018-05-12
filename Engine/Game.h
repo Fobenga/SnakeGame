@@ -51,7 +51,7 @@ private:
 	static constexpr float default_move_period = 0.09f;
 	float snake_mov_period_ = default_move_period;
 	float snake_mov_counter_ = 0.0f;
-	int snake_size = 4;
+	int snake_size_ = 4;
 	float snake_velocity_factor_ = 0.001f;
 	enum pos { up, down, left, right };
 	int p_current_direction_ = right;
@@ -61,7 +61,9 @@ private:
 	int ss_;
 	int ls_;
 	int fruits_catched = 0;
+	int fruits_generated = 0;
 	int ls_counter = 0;
+	int obstacles_generated = 0;
 	static constexpr int s_padding = 70;
 	static constexpr int ls_increase_ratio = 40;
 	static constexpr int ss_amount_tofeed_ls = 5;

@@ -77,14 +77,27 @@ void game::update_model()
 					{
 						snake_.GrowAndMoveBy(delta_loc_);
 						goal_.Respawn(rng_, brd_, snake_);
-						brd_.SpawnObstacle(rng_, snake_, goal_);
+						fruits_generated++;
+
+						for (auto i = 1; i <= ls_counter; ++i)
+						{
+							brd_.SpawnObstacle(rng_, snake_, goal_);
+							obstacles_generated++;
+						}
+
 						sfx_feed_.Play(rng_, 0.8f);
 
+						if (brd_.CheckForObstacle(goal_.GetLocation()))
+						{
+							goal_.Respawn(rng_, brd_, snake_);
+							fruits_generated++;
+						}
+
 						ss_++;
-						snake_size++;
+						snake_size_++;
 						fruits_catched++;
 
-						score_.small_score_counter -= ss_decrease_ratio * dt;
+						score_.small_score_counter -= static_cast<int>(ss_decrease_ratio * dt);
 						score_.small_score_counter += ss_increase_ratio;
 
 						if (score_.small_score_counter > ss_limit)
@@ -153,19 +166,24 @@ void game::compose_frame()
 		 * 5 - clear the obstacles
 		 */
 
-		static constexpr int fruit_value = 300;
+		static constexpr auto fruit_value = 300;
 		int final_score;
 
 		if (fruits_catched <= 1)
 			final_score = fruit_value * fruits_catched;
-		else final_score = fruit_value * sqrt(fruits_catched);
+		else final_score = static_cast<int>(fruit_value * sqrt(fruits_catched));
 
-		const auto grid_remaining = 767 - snake_size - fruits_catched;
+		const auto grid_remaining = 767 - snake_size_ - fruits_catched;
 
 		wnd_.ShowMessageBox(L"GAME OVER!",
 							L"Final Score: " + std::to_wstring(final_score) +
-							L"\n----------------------------\nObstacles Generated: " + std::to_wstring(fruits_catched) +
-							L"\n----------------------------\nGrid remaining: " + std::to_wstring(grid_remaining));
+							L"\n----------------------------\n"
+							"Obstacles Generated: " + std::to_wstring(obstacles_generated) +
+							L"\n----------------------------\n"
+							"Grid remaining: " + std::to_wstring(grid_remaining) + 
+							L"\n----------------------------\n"
+							L"Fruits Generated: " + std::to_wstring(fruits_generated) + 
+							L"\nFruits Eaten: " + std::to_wstring(fruits_catched));
 		wnd_.Kill();
 	}
 	break;
