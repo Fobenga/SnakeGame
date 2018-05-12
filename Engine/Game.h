@@ -60,15 +60,15 @@ private:
 	// score variables 
 	int ss_;
 	int ls_;
-	int fruits_catched = 0;
-	int fruits_generated = 0;
-	int ls_counter = 0;
-	int obstacles_generated = 0;
+	int fruits_catched_ = 0;
+	int fruits_generated_ = 0;
+	int ls_counter_ = 0;
+	int obstacles_generated_ = 0;
+	bool new_stage_ = false;
 	static constexpr int s_padding = 70;
 	static constexpr int ls_increase_ratio = 40;
 	static constexpr int ss_amount_tofeed_ls = 5;
 	static constexpr int ss_limit = Graphics::ScreenWidth - s_padding;
 	static constexpr int ss_increase_ratio = ss_limit / ss_amount_tofeed_ls;
-	static constexpr int ss_decrease_ratio = 1000;
 
 };

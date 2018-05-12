@@ -28,7 +28,7 @@ void game::update_model()
 	{
 		if (game_state_ != game_over)
 		{
-			// Behavior control
+			// Movement control
 			{
 				if (wnd_.kbd.KeyIsPressed(VK_UP) && p_current_direction_ != down)
 				{
@@ -58,7 +58,7 @@ void game::update_model()
 				else snake_mov_period_ = default_move_period;
 			}
 		}
-			// Moving timing and speed configurations
+			// Timing and Score configurations
 		{
 			snake_mov_counter_ += dt;
 			if (snake_mov_counter_ >= snake_mov_period_)
@@ -77,12 +77,12 @@ void game::update_model()
 					{
 						snake_.GrowAndMoveBy(delta_loc_);
 						goal_.Respawn(rng_, brd_, snake_);
-						fruits_generated++;
+						fruits_generated_++;
 
-						for (auto i = 1; i <= ls_counter; ++i)
+						for (auto i = 1; i <= ls_counter_; ++i)
 						{
 							brd_.SpawnObstacle(rng_, snake_, goal_);
-							obstacles_generated++;
+							obstacles_generated_++;
 						}
 
 						sfx_feed_.Play(rng_, 0.8f);
@@ -90,27 +90,37 @@ void game::update_model()
 						if (brd_.CheckForObstacle(goal_.GetLocation()))
 						{
 							goal_.Respawn(rng_, brd_, snake_);
-							fruits_generated++;
+							fruits_generated_++;
 						}
 
 						ss_++;
 						snake_size_++;
-						fruits_catched++;
+						fruits_catched_++;
 
-						score_.small_score_counter -= static_cast<int>(ss_decrease_ratio * dt);
 						score_.small_score_counter += ss_increase_ratio;
 
 						if (score_.small_score_counter > ss_limit)
 						{
-							ls_counter++;
+							ls_counter_++;
 							ls_++;
 							score_.small_score_counter = s_padding;
 							score_.long_score_counter += ls_increase_ratio;
+							new_stage_ = true;
 						}
+						else new_stage_ = false;
 					}
 					else
 					{
 						snake_.MoveBy(delta_loc_);
+						score_.small_score_counter -= 0.5;
+
+						if (score_.small_score_counter <= s_padding) score_.small_score_counter = s_padding;
+
+						if (fruits_catched_ >= 1 && score_.small_score_counter <= s_padding && !new_stage_)
+						{
+							snd_dead_.Play();
+							game_state_ = game_over;
+						}
 					}
 					sfx_slither_.Play(rng_, 0.08f);
 				}
@@ -169,21 +179,16 @@ void game::compose_frame()
 		static constexpr auto fruit_value = 300;
 		int final_score;
 
-		if (fruits_catched <= 1)
-			final_score = fruit_value * fruits_catched;
-		else final_score = static_cast<int>(fruit_value * sqrt(fruits_catched));
+		if (fruits_catched_ <= 1)
+			final_score = fruit_value * fruits_catched_;
+		else final_score = static_cast<int>(fruit_value * sqrt(fruits_catched_));
 
-		const auto grid_remaining = 767 - snake_size_ - fruits_catched;
-
-		wnd_.ShowMessageBox(L"GAME OVER!",
-							L"Final Score: " + std::to_wstring(final_score) +
+		wnd_.ShowMessageBox(L"GAME OVER! DIFFICULTY " + std::to_wstring(ls_counter_),
+							L"Fruits Eaten: " + std::to_wstring(fruits_catched_) +
 							L"\n----------------------------\n"
-							"Obstacles Generated: " + std::to_wstring(obstacles_generated) +
+							"Obstacles: " + std::to_wstring(obstacles_generated_) +
 							L"\n----------------------------\n"
-							"Grid remaining: " + std::to_wstring(grid_remaining) + 
-							L"\n----------------------------\n"
-							L"Fruits Generated: " + std::to_wstring(fruits_generated) + 
-							L"\nFruits Eaten: " + std::to_wstring(fruits_catched));
+							"Final Score: " + std::to_wstring(final_score));
 		wnd_.Kill();
 	}
 	break;
