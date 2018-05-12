@@ -10,7 +10,9 @@ game::game(MainWindow& wnd)
 	rng_(std::random_device()()),
 	goal_(rng_, brd_, snake_),
 	score_(gfx_)
-{}
+{
+	snd_intro_.Play(1.0f);
+}
 
 void game::go()
 {
@@ -96,7 +98,7 @@ void game::update_model()
 
 						if (score_.small_score_counter > ss_limit)
 						{
-							sfx_difpass_.Play(rng_, 0.8f);
+							sfx_difpass_.Play(rng_, default_sfx_vol);
 							new_stage_ = true;
 							ls_counter_++;
 							ls_++;
@@ -105,7 +107,7 @@ void game::update_model()
 						}
 						else
 						{
-							sfx_feed_.Play(rng_, 0.8f);
+							sfx_feed_.Play(rng_, default_sfx_vol);
 							new_stage_ = false;
 						}
 					}
@@ -113,7 +115,7 @@ void game::update_model()
 					{
 						snake_.MoveBy(delta_loc_);
 						total_movement_++;
-						score_.small_score_counter -= 2; // small score decrease ratio
+						score_.small_score_counter -= 2; // small score decrease ratio (integer only)
 
 						if (score_.small_score_counter <= s_padding) score_.small_score_counter = s_padding;
 
@@ -131,12 +133,9 @@ void game::update_model()
 	}
 	else if (game_state_ == standby)
 	{
-		gfx_.DrawSprite(Graphics::ScreenWidth / 2 - brd_.GetGridWidth()/2 - enter_key_.get_width() / 2, 
-						Graphics::ScreenHeight / 2 - brd_.GetGridHeight()/2 - enter_key_.get_height() / 2,
-						enter_key_.get_rect(), enter_key_);
-
 		if (wnd_.kbd.KeyIsPressed(VK_RETURN))
 		{
+			snd_intro_.StopOne();
 			snd_musicloop_.Play(1.0f, 0.6f);
 			game_state_ = running;
 		}
@@ -145,6 +144,8 @@ void game::update_model()
 
 void game::compose_frame()
 {
+
+
 	switch (game_state_)
 	{
 	case running:
@@ -163,8 +164,14 @@ void game::compose_frame()
 	}
 	break;
 	case standby:
+	{
+
+		gfx_.DrawSprite(Graphics::ScreenWidth / 2 - brd_.GetGridWidth() / 2 - enter_key_.get_width() / 2,
+						Graphics::ScreenHeight / 2 - brd_.GetGridHeight() / 2 - enter_key_.get_height() / 2,
+						enter_key_.get_rect(), enter_key_);
 		brd_.DrawBorder();
-		break;
+	}
+	break;
 	case game_over:
 	{
 

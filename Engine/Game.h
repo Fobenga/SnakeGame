@@ -41,12 +41,15 @@ private:
 	enum game_state { standby, game_over, running };
 	int game_state_ = standby;
 	Surface enter_key_ = Surface(L"bmp\\enter.bmp");
+	bool has_wnd_initialized_ = false;
 
 	// sound effect calls
 	SoundEffect sfx_feed_ = SoundEffect({ L"sound\\feed.wav" }, false, 0);
 	SoundEffect sfx_difpass_ = SoundEffect({ L"sound\\difpass.wav" }, false, 0);
+	Sound snd_intro_ = Sound(L"sound\\intro.wav",Sound::LoopType::AutoFullSound); 
 	Sound snd_musicloop_ = Sound(L"sound\\music.wav", Sound::LoopType::AutoFullSound); // loop this forever
 	Sound snd_dead_ = Sound(L"sound\\fail.wav");
+	static constexpr float default_sfx_vol = 0.8f;
 
 
 	// snake movement variables
