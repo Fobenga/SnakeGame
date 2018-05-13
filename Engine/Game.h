@@ -12,7 +12,6 @@
 #include "Score.h"
 #include "Surface.h"
 
-
 class game
 {
 public:
@@ -20,7 +19,10 @@ public:
 	game(const game&) = delete;
 	game& operator=(const game&) = delete;
 	void go();
-
+	~game()
+	{
+		delta_loc_ = { 1,0 };
+	}
 
 private:
 	void compose_frame();
@@ -37,17 +39,28 @@ private:
 	Goal goal_;
 	score score_;
 
+	bool restarting = true;
+
 	// set the state of the game
-	enum game_state { standby, game_over, running };
+	enum game_state { standby = 0, game_over = 1, running = 2 };
 	int game_state_ = standby;
+	bool death_by_wall_ = false;
 
 	// intro screen
 	Surface enter_key_ = Surface(L"bmp\\enter_key.bmp");
 	Surface game_title_ = Surface(L"bmp\\snake_title.bmp");
-	int x_enterkey_pos_ = Graphics::ScreenWidth / 2 - brd_.GetGridWidth() / 2 - enter_key_.get_width() / 2;
-	int y_enterkey_pos_ = Graphics::ScreenHeight / 2 - brd_.GetGridHeight() / 2 - enter_key_.get_height() / 2 + 30;
-	int y_game_title_pos_ = Graphics::ScreenHeight / 2 - brd_.GetGridHeight() / 2 - enter_key_.get_height() / 2 - 50;
-	int x_game_title_pos_ = Graphics::ScreenWidth / 2 - brd_.GetGridWidth() / 2 - enter_key_.get_width() / 2 - 50;
+
+	// when window starts, do this
+	int x_ekey_end_pos = Graphics::ScreenWidth / 2 - brd_.GetGridWidth() / 2 - enter_key_.get_width() / 2;
+	int y_ekey_end_pos = Graphics::ScreenHeight / 2 - brd_.GetGridHeight() / 2 - enter_key_.get_height() / 2 + 30;
+	int y_gtitle_end_pos = Graphics::ScreenHeight / 2 - brd_.GetGridHeight() / 2 - enter_key_.get_height() / 2 - 50;
+	int x_gtitle_end_pos = Graphics::ScreenWidth / 2 - brd_.GetGridWidth() / 2 - enter_key_.get_width() / 2 - 50;
+
+	int x_enterkey_pos_ = x_ekey_end_pos - 1000;
+	int y_enterkey_pos_ = y_ekey_end_pos;
+	int y_game_title_pos_ = y_gtitle_end_pos;
+	int x_game_title_pos_ = x_gtitle_end_pos + 1000;
+
 
 	// key overlay
 	Surface shift_key_ = Surface(L"bmp\\shift_key.bmp");
@@ -59,7 +72,7 @@ private:
 	static constexpr Color overlay_color = { 80,80,80 };
 	static constexpr Color key_chroma = Colors::Black;
 	static constexpr int padding_between_keys = 60;
-	static constexpr int key_align_pos_x = 730;
+	int key_align_pos_x = 500;
 	static constexpr int key_align_pos_y = 50;
 
 	const int shift_pos_y_ = key_align_pos_y;
@@ -73,6 +86,10 @@ private:
 	bool is_right_being_pressed_ = false;
 	bool is_down_being_pressed_ = false;
 	bool is_up_being_pressed_ = false;
+
+	// overlay animation at intro
+	RectI overlay_clip = RectI({ 730,50 }, 50, 60 * 5);
+	static constexpr int x_final_pos = 730;
 
 	// sound effect calls
 	SoundEffect sfx_feed_ = SoundEffect({ L"sound\\feed.wav" }, false, 0);
@@ -88,7 +105,7 @@ private:
 	static constexpr float snake_mov_period_min = 0.06f;
 	static constexpr float instant_multiplier = 0.8f;
 	static constexpr float default_move_period = 0.09f;
-	static constexpr int init_snake_s = 3;
+	static constexpr int init_snake_s = 2;
 	float snake_mov_period_ = default_move_period;
 	float snake_mov_counter_ = 0.0f;
 	int snake_size_ = init_snake_s + 1;

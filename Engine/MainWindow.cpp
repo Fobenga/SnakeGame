@@ -59,9 +59,14 @@ bool MainWindow::IsMinimized() const
 	return IsIconic( hWnd ) != 0;
 }
 
-void MainWindow::ShowMessageBox( const std::wstring& title,const std::wstring& message ) const
+int MainWindow::ShowMessageBox_YN( const std::wstring& title,const std::wstring& message ) const
 {
-	MessageBox( hWnd,message.c_str(),title.c_str(),MB_OK );
+	return MessageBox( hWnd,message.c_str(),title.c_str(),MB_YESNO);
+}
+
+int MainWindow::ShowMessageBox_OK(const std::wstring& title, const std::wstring& message) const
+{
+	return MessageBox(hWnd, message.c_str(), title.c_str(), MB_OK);
 }
 
 bool MainWindow::ProcessMessage()

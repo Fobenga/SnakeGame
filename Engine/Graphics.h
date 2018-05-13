@@ -15,8 +15,8 @@ public:
 		Exception( HRESULT hr,const std::wstring& note,const wchar_t* file,unsigned int line );
 		std::wstring GetErrorName() const;
 		std::wstring GetErrorDescription() const;
-		virtual std::wstring GetFullMessage() const override;
-		virtual std::wstring GetExceptionType() const override;
+		std::wstring GetFullMessage() const override;
+		std::wstring GetExceptionType() const override;
 	private:
 		HRESULT hr;
 	};
@@ -43,7 +43,6 @@ public:
 	{
 		DrawRect( x0,y0,x0 + width,y0 + height,c );
 	}
-
 	void Graphics::DrawSpriteNonChroma(int x, int y, const Surface & s);
 	void Graphics::DrawSpriteNonChroma(int x, int y, const RectI & src_rect, const Surface & s);
 	void Graphics::DrawSpriteNonChroma(int x, int y, RectI src_rect, const RectI & clip, const Surface & s);

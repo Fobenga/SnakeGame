@@ -52,7 +52,6 @@ void Board::SpawnObstacle(std::mt19937 & rng, const Snake & snake, const Goal& g
 	std::uniform_int_distribution<int> yDist(0, GetGridHeight() - 1);
 
 	Location newLoc;
-
 	do
 	{
 		newLoc.x = xDist(rng);
@@ -64,8 +63,6 @@ void Board::SpawnObstacle(std::mt19937 & rng, const Snake & snake, const Goal& g
 
 void Board::DrawBorder()
 {
-
-
 	// top
 	gfx.DrawRect(left, top, right, top + borderWidth, borderColor);
 
@@ -95,5 +92,5 @@ void Board::DrawObstacles()
 
 RectI Board::get_rect() const
 {
-	return {left, right, top, bottom};
+	return { left, right, top, bottom };
 }

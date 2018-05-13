@@ -16,7 +16,7 @@ Surface::Surface(const std::wstring & filename)
 	assert(bm_info_header.biBitCount == 24 || bm_info_header.biBitCount == 32);
 	assert(bm_info_header.biCompression == BI_RGB);
 
-	const bool is_32_b = bm_info_header.biBitCount == 32;
+	const auto is_32_b = bm_info_header.biBitCount == 32;
 
 	width = bm_info_header.biWidth;
 
@@ -39,14 +39,12 @@ Surface::Surface(const std::wstring & filename)
 		dy = -1;
 	}
 
-
 	p_pixels = new Color[width*height];
 
 	file.seekg(bm_file_header.bfOffBits);
 
 	// padding is only for 24 bits
 	const auto padding = (4 - (width * 3) % 4) % 4;
-
 	for (auto y = y_start; y != y_end; y += dy)
 	{
 		for (auto x = 0; x < width; x++)
@@ -78,7 +76,6 @@ Surface::Surface(const Surface & rhs)
 	{
 		p_pixels[i] = rhs.p_pixels[i];
 	}
-
 }
 
 Surface::~Surface()
