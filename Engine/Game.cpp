@@ -297,28 +297,21 @@ void game::compose_frame()
 		{
 			game t_g(wnd_);
 
-			// glitch handler / closes window
+			// glitch handler / try double restart
 			if ((is_left_being_pressed_ && p_current_direction_ == left ||
 				 is_right_being_pressed_ && p_current_direction_ == right ||
 				 is_down_being_pressed_ && p_current_direction_ == down ||
 				 is_up_being_pressed_ && p_current_direction_ == up) && !death_by_wall_)
 			{
-				const int glitch = wnd_.ShowMessageBox_OK(L"ERROR: Snake Initialization Error", L"An error ocurred trying to restart the game.\n"
-														  "                     Please open it again.");
+				// const int glitch = wnd_.ShowMessageBox_OK(L"ERROR: Snake Initialization Error", L"An error ocurred trying to restart the game.\n"
+				// 										  "                     Please open it again.");
 				if (glitch == IDOK)
 				{
-					wnd_.Kill();
+					t_g.go();
+					// may work
+					// wnd_.Kill();
 				}
 			}
-
-			// if (wnd_.kbd.KeyIsPressed(VK_UP) ||
-			// 	wnd_.kbd.KeyIsPressed(VK_DOWN) ||
-			// 	wnd_.kbd.KeyIsPressed(VK_LEFT) ||
-			// 	wnd_.kbd.KeyIsPressed(VK_RIGHT) ||
-			// 	wnd_.kbd.KeyIsPressed(VK_SHIFT))
-			// {
-			// 	wnd_.kbd.Flush();
-			// }
 
 			if (restarting)
 			{
