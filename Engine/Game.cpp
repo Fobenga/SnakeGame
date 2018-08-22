@@ -266,7 +266,7 @@ void game::compose_frame()
 		static constexpr auto fruit_value = 300;
 		int final_score;
 
-		// final score calculation formulas
+		// final score calculation
 		if (fruits_catched_ <= 1)
 			final_score = fruit_value * fruits_catched_;
 		else if (ls_counter_ <= 1)
