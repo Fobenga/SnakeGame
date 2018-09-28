@@ -102,6 +102,8 @@ private:
 	Sound snd_dead_ = Sound(L"sound\\fail.wav");
 
 	// snake movement variables
+	
+
 	static constexpr float snake_mov_period_min = 0.06f;
 	static constexpr float instant_multiplier = 0.8f;
 	static constexpr float default_move_period = 0.09f;
