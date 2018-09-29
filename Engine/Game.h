@@ -117,18 +117,18 @@ private:
 	bool snake_already_initialized_ = false;
 
 	// score variables 
-	int ss_;
-	int ls_;
+	int smallscore_;
+	int largescore_;
 	int total_movement_ = 0;
 	int fruits_catched_ = 0;
-	int ls_counter_ = 0;
+	int largescore_counter_ = 0;
 	int obstacles_generated_ = 0;
 	bool new_stage_ = false;
 	bool death_by_time_ = false;
-	static constexpr int s_padding = 70;
-	static constexpr int ls_increase_ratio = 80;
-	static constexpr int ss_amount_tofeed_ls = 5;
-	static constexpr int ss_limit = Graphics::ScreenWidth - s_padding;
-	static constexpr int ss_increase_ratio = ss_limit / ss_amount_tofeed_ls;
+	static constexpr int score_padding = 70;
+	static constexpr int largescore_increase_ratio = 80;
+	static constexpr int smallscore_amount_tofeed_largescore = 5;
+	static constexpr int smallscore_limit = Graphics::ScreenWidth - score_padding;
+	static constexpr int smallscore_increase_ratio = smallscore_limit / smallscore_amount_tofeed_largescore;
 
 };

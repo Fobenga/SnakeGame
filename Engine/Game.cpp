@@ -89,10 +89,12 @@ void game::update_model()
 			if(snake_mov_counter_ >= snake_mov_period_)
 			{
 				snake_mov_counter_ -= snake_mov_period_;
-				const Location next = snake_.GetNextHeadLocation(delta_loc_);
-				if(!brd_.IsInsideBoard(next) || snake_.IsInTileExceptEnd(next) || brd_.CheckForObstacle(next))
+				const Location snake_head = snake_.GetNextHeadLocation(delta_loc_);
+				if(!brd_.IsInsideBoard(snake_head) || snake_.IsInTileExceptEnd(snake_head) ||
+				   brd_.CheckForObstacle(snake_head))
 				{
-					if(!brd_.IsInsideBoard(next)) death_by_wall_ = true;
+					if(!brd_.IsInsideBoard(snake_head)) 
+						death_by_wall_ = true;
 
 					game_state_ = game_over;
 					snd_dead_.Play();
@@ -100,11 +102,11 @@ void game::update_model()
 				}
 				else
 				{
-					if(next == goal_.GetLocation())
+					if(snake_head == goal_.GetLocation())
 					{
 						snake_.GrowAndMoveBy(delta_loc_);
 						goal_.Respawn(rng_, brd_, snake_);
-						if(ls_counter_ % 2 == 0 && ls_counter_ != 0)
+						if(largescore_counter_ % 2 == 0 && largescore_counter_ != 0)
 						{
 							for(auto i = 0; i < 2; ++i)
 							{
@@ -116,20 +118,20 @@ void game::update_model()
 						if(brd_.CheckForObstacle(goal_.GetLocation()))
 							goal_.Respawn(rng_, brd_, snake_);
 
-						ss_++;
+						smallscore_++;
 						snake_size_++;
 						fruits_catched_++;
 
-						score_.small_score_counter += ss_increase_ratio;
+						score_.small_score_counter += smallscore_increase_ratio;
 
-						if(score_.small_score_counter > ss_limit)
+						if(score_.small_score_counter > smallscore_limit)
 						{
 							sfx_difpass_.Play(rng_, default_sfx_vol);
 							new_stage_ = true;
-							ls_counter_++;
-							ls_++;
-							score_.small_score_counter = s_padding;
-							score_.long_score_counter += ls_increase_ratio;
+							largescore_counter_++;
+							largescore_++;
+							score_.small_score_counter = score_padding;
+							score_.long_score_counter += largescore_increase_ratio;
 						}
 						else
 						{
@@ -143,9 +145,9 @@ void game::update_model()
 						total_movement_++;
 						score_.small_score_counter -= 2;
 
-						if(score_.small_score_counter <= s_padding) score_.small_score_counter = s_padding;
+						if(score_.small_score_counter <= score_padding) score_.small_score_counter = score_padding;
 
-						if(fruits_catched_ >= 1 && score_.small_score_counter <= s_padding && !new_stage_)
+						if(fruits_catched_ >= 1 && score_.small_score_counter <= score_padding && !new_stage_)
 						{
 							snd_dead_.Play();
 							game_state_ = game_over;
@@ -160,22 +162,13 @@ void game::update_model()
 	}
 	else if(game_state_ == standby)
 	{
-
-		if(wnd_.kbd.KeyIsPressed(VK_RIGHT) ||
-		   wnd_.kbd.KeyIsPressed(VK_LEFT) ||
-		   wnd_.kbd.KeyIsPressed(VK_UP) ||
-		   wnd_.kbd.KeyIsPressed(VK_DOWN) ||
-		   wnd_.kbd.KeyIsPressed(VK_SHIFT))
-		{
-			wnd_.kbd.KeyIsEmpty();
-		}
 		if(wnd_.kbd.KeyIsPressed('X'))
 			wnd_.Kill();
 
 		if(wnd_.kbd.KeyIsPressed(VK_RETURN))
 		{
 			snd_intro_.StopOne();
-			snd_musicloop_.Play(1.0f, 0.6f);
+			snd_musicloop_.Play(1.0f, 0.4f);
 			game_state_ = running;
 		}
 	}
@@ -189,7 +182,6 @@ void game::compose_frame()
 		{
 			// animated intro 
 			{
-
 				x_enterkey_pos_ += 30;
 				x_game_title_pos_ -= 30;
 
@@ -222,16 +214,11 @@ void game::compose_frame()
 					key_align_pos_x += 10;
 
 				// key overlay sprites
-
-
-
-
 				gfx_.DrawSprite(key_align_pos_x, left_pos_y_, left_key_.get_rect(), overlay_clip, left_key_, key_chroma);
 				gfx_.DrawSprite(key_align_pos_x, right_pos_y_, right_key_.get_rect(), overlay_clip, right_key_, key_chroma);
 				gfx_.DrawSprite(key_align_pos_x, down_pos_y_, down_key_.get_rect(), overlay_clip, down_key_, key_chroma);
 				gfx_.DrawSprite(key_align_pos_x, shift_pos_y_, shift_key_.get_rect(), overlay_clip, shift_key_, key_chroma);
 				gfx_.DrawSprite(key_align_pos_x, up_pos_y_, up_key_.get_rect(), overlay_clip, up_key_, key_chroma);
-
 			}
 
 			// game loop
@@ -268,13 +255,15 @@ void game::compose_frame()
 		break;
 		case game_over:
 		{
+			wnd_.kbd.Flush();
+
 			static constexpr auto fruit_value = 300;
 			int final_score;
 
 			// final score calculation
 			if(fruits_catched_ <= 1)
 				final_score = fruit_value * fruits_catched_;
-			else if(ls_counter_ <= 1)
+			else if(largescore_counter_ <= 1)
 				final_score = static_cast<int>(fruit_value * sqrt(fruits_catched_)) - total_movement_;
 			else
 				final_score = static_cast<int>(fruit_value * sqrt(fruits_catched_) * obstacles_generated_ - total_movement_ * 2);
@@ -285,7 +274,7 @@ void game::compose_frame()
 			else
 				dbt = std::to_wstring(final_score);
 
-			wnd_.ShowMessageBox_OK(L"GAME OVER! DIFFICULTY " + std::to_wstring(ls_counter_),
+			wnd_.ShowMessageBox_OK(L"GAME OVER! DIFFICULTY " + std::to_wstring(largescore_counter_),
 								   L"----------------------------\n"
 								   "Fruits Catched: " + std::to_wstring(fruits_catched_) +
 								   L"\n----------------------------\n"
@@ -300,8 +289,7 @@ void game::compose_frame()
 			{
 				case IDYES:
 				{
-					game t_g(wnd_);
-
+					game new_game(wnd_);
 
 					// glitch handler / try double restart
 					if((is_left_being_pressed_ && p_current_direction_ == left ||
@@ -309,25 +297,23 @@ void game::compose_frame()
 					   is_down_being_pressed_ && p_current_direction_ == down ||
 					   is_up_being_pressed_ && p_current_direction_ == up) && !death_by_wall_)
 					{
-						const int glitch = wnd_.ShowMessageBox_OK(L"ERROR: Snake Initialization Error", L"An error ocurred trying to restart the game.\n"
-																  "                     Please open it again.");
-						
+						const int glitch = wnd_.ShowMessageBox_OK(L"ERROR: Snake Initialization Error",
+																  L"An error ocurred trying to achieve in-game restart.\n"
+																  "                     Please restart it manually.");
+
 
 						if(glitch == IDOK)
 						{
-							if(!wnd_.kbd.CharIsEmpty())
-								wnd_.kbd.FlushChar();
-
-							t_g.go();
-							// may work
-							// wnd_.Kill();
+							wnd_.Kill();
 						}
 					}
 
 					if(restarting)
 					{
 						while(wnd_.ProcessMessage())
-							t_g.go();
+						{
+							new_game.go();
+						}
 
 						restarting = false;
 						wnd_.Kill();
