@@ -1,5 +1,4 @@
 # SnakeGame
-<h1 style="text-align: left;">Snake</h1>
 <p>Basic logic snake game made with a custom DirectX 2D Framework called Chili Framework<br />(<em><a href="https://github.com/planetchili/chili_framework">https://github.com/planetchili/chili_framework</a></em>)</p>
 <h2>Controls</h2>
 <p><strong>UP ARROW -</strong>&nbsp;Move the snake upwards.<strong><br />DOWN ARROW -&nbsp;</strong>Move the snake downwards.<strong><br />LEFT ARROW -&nbsp;</strong>Move the snake to the left.<strong><br />RIGHT ARROW</strong>&nbsp;<strong>-&nbsp;</strong>Move the snake to the right.<br /><strong>SHIFT -&nbsp;&nbsp;</strong>Speeds up the snake by 80%<br /><strong>CTRL + X -&nbsp;</strong>Closes the game while in the start menu.</p>
